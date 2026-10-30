@@ -1,0 +1,46 @@
+---
+- name: Run controller Python script on Windows SUT
+  hosts: SUT_01
+  gather_facts: false
+
+  vars:
+    ansible_connection: ssh
+    ansible_shell_type: powershell
+
+  tasks:
+    - name: Check hostname
+      win_command: hostname
+      register: hostname_result
+      changed_when: false
+    
+    - name: Print hostname
+      debug:
+        msg: "{{hostname_result.stdout | trim }}"
+
+    - name: Check Python version
+      win_command: python --version
+      register: python_version
+      changed_when: false
+
+    - name: Print python version
+      debug:
+        msg: "{{python_version.stdout | trim }}"
+
+    - name: Create destination folder
+      win_file:
+        path: 'C:\Ansible_temp'
+        state: directory
+
+    - name: Copy Python script from controller to SUT
+      win_copy:
+        src: /root/Documents/EE_Lab/Ansible_Lab/python_script/hostname.py
+        dest: 'C:\Ansible_temp\hostname.py'
+
+    - name: Execute Python script on SUT
+      win_command: python C:\Ansible_temp\hostname.py
+      register: script_result
+      changed_when: false
+
+    - name: Display script output
+      debug:
+        var: script_result.stdout_lines
