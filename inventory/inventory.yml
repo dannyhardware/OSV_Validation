@@ -1,0 +1,10 @@
+group_host_1:
+  hosts:
+    SUT_01:
+      ansible_host: 192.168.78.31
+
+vars:
+  ansible_port: 22
+  ansible_user: admin
+  ansible_connection: ssh
+  ansible_shell_type: powershell
